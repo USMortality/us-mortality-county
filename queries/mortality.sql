@@ -174,7 +174,7 @@ SELECT
 FROM
   (
     SELECT
-      b.county,
+      REPLACE(b.county, ',', '') AS "county",
       b.year,
       b.month,
       concat (b.year, "/", b.month) AS "year_month",
