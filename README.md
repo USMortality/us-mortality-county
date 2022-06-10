@@ -15,4 +15,4 @@ then concatinated: `awk '(NR == 1) || (FNR > 1)' *.csv > deaths.csv`
 `./tools/import_csv.sh data/population/us-county-population.csv deaths_county`
 
 # Export
-`mysql -h 127.0.0.1 -u root < ./queries/mortality.sql >./out/mortality.tsv`
+`mysql -h 127.0.0.1 -u root < ./queries/mortality_amish.sql >./out/mortality_amish.tsv`

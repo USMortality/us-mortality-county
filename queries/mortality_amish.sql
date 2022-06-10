@@ -30,7 +30,8 @@ FROM
     "LaGrange County, IN",
     "Adams County, IN",
     "Davis County, IA",
-    "Douglas County, IL"
+    "Douglas County, IL",
+    "New York County, NY"
   )
 ORDER BY
   residence_county,
