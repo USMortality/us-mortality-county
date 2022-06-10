@@ -11,7 +11,7 @@ e.g.: `./tools/wonderTxt2Csv.sh ./data/county/m_2018_1.txt`
 then concatinated: `awk '(NR == 1) || (FNR > 1)' *.csv > deaths.csv`
 
 # Import
-`./tools/import_csv.sh data/county/deaths.csv deaths_county`
+`./tools/import_csv.sh data/deaths/deaths.csv deaths_county`
 `./tools/import_csv.sh data/population/us-county-population.csv deaths_county`
 
 # Export
