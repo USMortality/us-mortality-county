@@ -241,15 +241,15 @@ SELECT
   a.year,
   a.`month`,
   a.`year_month`,
-  IFNULL(a.deaths, ""),
-  IFNULL(a.population, ""),
-  IFNULL(a.mortality, ""),
+  IFNULL(a.deaths, "") AS "deaths",
+  IFNULL(a.population, "") AS "population",
+  IFNULL(a.mortality, "") AS "mortality",
   a.baseline,
   a.baseline_normal_lower,
   a.baseline_normal_upper,
   a.baseline_excess,
-  IFNULL(b.dose1, ""),
-  IFNULL(round(dose1 / population, 3), "") AS dose1_pct
+  IFNULL(b.dose1, "") AS "dose1",
+  IFNULL(round(dose1 / population, 3), "") AS "dose1_pct"
 FROM
   us_county.exp_mortality a
   LEFT JOIN us_county.vaccinations b ON a.county = b.county
