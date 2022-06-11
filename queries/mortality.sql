@@ -241,6 +241,6 @@ SELECT
   round(dose1 / population, 3) AS dose1_pct
 FROM
   us_county.exp_mortality a
-  JOIN us_county.vaccinations b ON a.county = b.county
+  LEFT JOIN us_county.vaccinations b ON a.county = b.county
   AND a.year = b.year
   AND a.month = b.month;
