@@ -237,7 +237,8 @@ ORDER BY
 CREATE INDEX IF NOT EXISTS idx_all ON us_county.mortality (county, year, `month`);
 
 SELECT
-  *,
+  a.*,
+  b.dose1,
   round(dose1 / population, 3) AS dose1_pct
 FROM
   us_county.exp_mortality a
