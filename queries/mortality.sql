@@ -40,9 +40,9 @@ ORDER BY
 
 CREATE INDEX IF NOT EXISTS idx_all ON us_county.mortality (county, MONTH);
 
-DROP VIEW IF EXISTS us_county.mortality_lreg;
+DROP TABLE IF EXISTS us_county.mortality_lreg;
 
-CREATE VIEW us_county.mortality_lreg AS
+CREATE TABLE us_county.mortality_lreg AS
 SELECT
   county,
   slope,
@@ -51,7 +51,10 @@ FROM
   (
     SELECT
       county,
-      sum(x_bar_delta * y_bar_delta) / sum(x_bar_delta * x_bar_delta) AS slope,
+      CASE
+        WHEN sum(x_bar_delta * x_bar_delta) = 0 THEN 0
+        ELSE sum(x_bar_delta * y_bar_delta) / sum(x_bar_delta * x_bar_delta)
+      END AS slope,
       max(x_bar) AS x_bar_max,
       max(y_bar) AS y_bar_max
     FROM
@@ -92,9 +95,9 @@ FROM
       county
   ) a;
 
-DROP VIEW IF EXISTS us_county.mortality_baseline_correction;
+DROP TABLE IF EXISTS us_county.mortality_baseline_correction;
 
-CREATE VIEW us_county.mortality_baseline_correction AS
+CREATE TABLE us_county.mortality_baseline_correction AS
 SELECT
   a.county,
   year,
@@ -143,9 +146,9 @@ FROM
       JOIN us_county.mortality_lreg b
   ) b ON a.county = b.county;
 
-DROP VIEW IF EXISTS us_county.mortality_baseline;
+DROP TABLE IF EXISTS us_county.mortality_baseline;
 
-CREATE VIEW us_county.mortality_baseline AS
+CREATE TABLE us_county.mortality_baseline AS
 SELECT
   a.county,
   b.year,
@@ -169,6 +172,41 @@ FROM
   ) a
   RIGHT JOIN us_county.mortality_baseline_correction b ON a.county = b.county;
 
+DROP TABLE IF EXISTS us_county.vaccinations;
+
+CREATE TABLE us_county.vaccinations AS
+SELECT
+  county,
+  year,
+  `month`,
+  round(avg(dose1)) AS "dose1"
+FROM
+  (
+    SELECT
+      concat(recip_county, " ", recip_state) AS county,
+      cast(right(date, 4) AS UNSIGNED) AS "year",
+      cast(left (date, 2) AS UNSIGNED) AS "month",
+      CASE
+        WHEN administered_dose1_recip <> "" THEN cast(administered_dose1_recip AS UNSIGNED)
+        ELSE 0
+      END AS dose1
+    FROM
+      us_county.imp_vaccinations a
+  ) a
+GROUP BY
+  county,
+  `month`,
+  year
+ORDER BY
+  county,
+  `year`,
+  `month`;
+
+CREATE INDEX IF NOT EXISTS idx_all ON us_county.vaccinations (county, year, `month`);
+
+DROP TABLE IF EXISTS us_county.exp_mortality;
+
+CREATE TABLE us_county.exp_mortality AS
 SELECT
   *
 FROM
@@ -178,9 +216,9 @@ FROM
       b.year,
       b.month,
       concat (b.year, "/", b.month) AS "year_month",
-      IFNULL(a.deaths, "") AS "deaths",
-      IFNULL(a.population, "") AS "population",
-      round(IFNULL(a.mortality, ""), 1) AS "mortality",
+      a.deaths AS "deaths",
+      a.population AS "population",
+      round(a.mortality, 1) AS "mortality",
       round(b.mortality, 1) AS baseline,
       round(b.mortality - 2 * b.mortality_stddev, 1) AS "baseline_normal_lower",
       round(b.mortality + 2 * b.mortality_stddev, 1) AS "baseline_normal_upper",
@@ -192,5 +230,17 @@ FROM
       AND a.month = b.month
   ) a
 ORDER BY
+  county,
   year,
-  MONTH;
+  `month`;
+
+CREATE INDEX IF NOT EXISTS idx_all ON us_county.mortality (county, year, `month`);
+
+SELECT
+  *,
+  round(dose1 / population, 3) AS dose1_pct
+FROM
+  us_county.exp_mortality a
+  JOIN us_county.vaccinations b ON a.county = b.county
+  AND a.year = b.year
+  AND a.month = b.month;
