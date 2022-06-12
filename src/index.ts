@@ -51,12 +51,14 @@ for (const row of data) {
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 for (const [_, value] of countyData) {
+  const fSmoothFactor = 3 / value.length
+
   for (const column of columns) {
     const y: number[] = []
     for (const row of value) y.push(parseFloat(row[column] as string))
     const x = fillerAutoIncrementArray(y.length)
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const yLoess = lowess(x, y, { f: 0.1 }) as Output
+    const yLoess = lowess(x, y, { f: fSmoothFactor }) as Output
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     const ySmooth = getSmoothedArrayMulti(yLoess.y, 10) as number[]
 

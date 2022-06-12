@@ -29,13 +29,14 @@ for (const row of data) {
 }
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 for (const [_, value] of countyData) {
+    const fSmoothFactor = 3 / value.length;
     for (const column of columns) {
         const y = [];
         for (const row of value)
             y.push(parseFloat(row[column]));
         const x = fillerAutoIncrementArray(y.length);
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-        const yLoess = lowess(x, y, { f: 0.1 });
+        const yLoess = lowess(x, y, { f: fSmoothFactor });
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         const ySmooth = getSmoothedArrayMulti(yLoess.y, 10);
         let i = 0;
