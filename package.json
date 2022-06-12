@@ -1,0 +1,33 @@
+{
+  "name": "us-mortality-county",
+  "version": "1.0.0",
+  "description": "- US County Population 2010-2021: https://docs.google.com/spreadsheets/d/16NFiU_W04o5AypRzKi9BGrxftcHLhLkXcSndf5kRYaA/edit#gid=0   - https://www.census.gov/programs-surveys/popest/data/tables.2021.List_58029271.html - Deaths: https://wonder.cdc.gov/mcd-icd10-provisional.html - Vaccinations: https://data.cdc.gov/Vaccinations/COVID-19-Vaccinations-in-the-United-States-County/8xkx-amqh",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "lint": "eslint -c .eslintrc.cjs --ext .ts ./src/",
+    "build": "npm run clean && npx tsc",
+    "clean": "rm -rf ./dist/* && rm -rf ./out/*",
+    "watch": "npx tsc -w",
+    "test": "npx mocha",
+    "testDebug": "env TS_NODE_COMPILER_OPTIONS='{\"module\": \"commonjs\" }' ./node_modules/.bin/mocha --require ts-node/register --project tsconfig.testing.json --inspect-brk --enable-source-maps 'tests/**/*.test.ts'",
+    "test:coverage": "npx c8 npm test && npx c8 check-coverage --lines 70 --per-file"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-usmortality:USMortality/us-mortality-county.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@stdlib/stats-lowess": "^0.0.6",
+    "csvjson": "^5.1.0",
+    "csvtojson": "^2.0.10",
+    "gauss-window": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.42",
+    "@typescript-eslint/eslint-plugin": "^5.27.1",
+    "eslint": "^8.17.0"
+  }
+}

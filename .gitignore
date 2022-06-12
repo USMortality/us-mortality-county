@@ -1,1 +1,3 @@
 data/vaccine/vaccinations.csv
+node_modules
+package-lock.json
